@@ -1,0 +1,42 @@
+﻿<div class="col-md-3 mb-3">
+	<div class="card custom-card">
+			<img src="/images/@livro.Capa" class="card-img-top custom-card-img" alt="Capa">
+			<div class="card-body">
+				<h5 class="card-title">@livro.Titulo</h5>
+				<p class="card-text">@livro.Autor</p>
+				<p class="card-text">@livro.Editora</p>
+				<p class="card-text">Lançamento: @livro.DataPublicacao.ToShortDateString()</p>
+				<div class="d-flex justify-content-between align-items-center mt-2">
+					<a href='/editalivro/@livro.LivroId' class="btn btn-primary">Editar</a>
+				<button class="btn btn-danger" @onclick="ConfirmarDialogo">Excluir</button>
+				</div>
+			</div>
+	</div>
+</div>
+
+<DialogoComponent Exibir="exibirDialogo" Oncancel="CancelarExclusao" Ondelete="ConfirmaExclusao">
+	<h3 style="color:red;font-weight:bold">Confirma exclusão deste livro: Id=@livro.LivroId ?</h3>
+</DialogoComponent>
+
+@code
+{
+	private bool exibirDialogo = false;
+	
+	[Parameter]
+	public required Livro livro { get; set; }
+
+	private void ConfirmarDialogo()
+	{
+		exibirDialogo = true;
+	}
+	private void CancelarExclusao()
+	{
+		exibirDialogo = false;
+	}
+	private async Task ConfirmaExclusao()
+	{
+		exibirDialogo = false;
+		await livroRepository.RemoverLivro(livro.LivroId);
+		navigation.NavigateTo("/livros");
+	}
+}
